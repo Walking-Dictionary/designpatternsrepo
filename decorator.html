@@ -1,0 +1,91 @@
+<?php
+
+class Meal {
+    private $chef;
+    private $Entree;
+    function __construct($Entree_in, $chef_in) {
+        $this->chef = $chef_in;
+        $this->Entree  = $Entree_in;
+    }
+    function getchef() {
+        return $this->chef;
+    }
+    function getEntree() {
+        return $this->Entree;
+    }
+    function getchefAndEntree() {
+      return $this->getEntree().'  prepared by '.$this->getchef();
+    }
+}
+
+class MealEntreeDecorator {
+    protected $Meal;
+    protected $Entree;
+    public function __construct(Meal $Meal_in) {
+        $this->Meal = $Meal_in;
+        $this->resetEntree();
+    }   
+    //doing this so original object is not altered
+    function resetEntree() {
+        $this->Entree = $this->Meal->getEntree();
+    }
+    function showEntree() {
+        return $this->Entree;
+    }
+}
+
+class MealEntreeChapatiDecorator extends MealEntreeDecorator {
+    private $med;
+    public function __construct(MealEntreeDecorator $med_in) {
+        $this->med = $med_in;
+    }
+    function ChapatiEntree() {
+        $this->med->Entree = "Today " . $this->med->Entree . " is served with 2 Chapatis";
+    }
+}
+
+class MealEntreeWaliDecorator extends MealEntreeDecorator {
+    private $med;
+    public function __construct(MealEntreeDecorator $med_in) {
+        $this->med = $med_in;
+    }
+    function WaliEntree() {
+        $this->med->Entree =$this->med->Entree . " and Wali";
+    }
+}
+
+  writeln('**** DECORATOR PATTERN TEST ****');
+  writeln('');
+
+  $patternMeal = new Meal('Whole Kuku', 'Mpishi Muruwa');
+ 
+  $decorator = new MealEntreeDecorator($patternMeal);
+  $WaliDecorator = new MealEntreeWaliDecorator($decorator);
+  $ChapatiDecorator = new MealEntreeChapatiDecorator($decorator);
+ 
+  writeln('<b>showing Entree : </b>');
+  writeln($decorator->showEntree());
+  writeln('');
+ 
+  writeln('<b>showing Entree after two Chapatis added :</b> ');
+  $ChapatiDecorator->ChapatiEntree();
+  writeln($decorator->showEntree());
+  writeln('');
+ 
+  writeln('<b>showing Entree after Wali added : </b>');
+  $WaliDecorator->WaliEntree();
+  writeln($decorator->showEntree());
+  writeln('');
+ 
+  writeln('<b>showing Entree after reset: </b>');
+  writeln($decorator->resetEntree());
+  writeln($decorator->showEntree());
+  writeln('');
+
+  writeln('END TESTING DECORATOR PATTERN');
+
+  function writeln($line_in) {
+    echo $line_in."<br/>";
+  }
+
+?>
